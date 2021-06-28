@@ -18,14 +18,35 @@
 16. I found that writing to a s3:// bucket instead of s3a:// was much faster (as examined in my AWS_HOST:18080 Apache Spark logging)
 17. I could run my job with spark-submit etl.py on the AWS EMR command line. Running the script on an EMR cluster takes approx. 1 hour for the full data set.
 
-
 # Answers to asked questions
 ## Discuss the purpose of this database in context of the startup, Sparkify, and their analytical goals.
 The sparkify company currently has locally hosted song and log data and is trying to scale up by moving the data into the cloud. The aim is to store the data on AWS S3, load it with AWS EMR (Spark), transform it into fact/dimension tables and return these to S3.
 The advantage of this is no longer having to host on-premise servers with administrators and better scalability in the cloud.
 
 ## State and justify your database schema design and ETL pipeline.
-The database design and ETL pipeline details are covered in the "Steps taken" section.
+My database consists of five tables:
+1. songs
+2. artists
+3. users
+4. time
+5. songplays
+
+The songs table has the following structure:
+song_id (unique string), title (string), artist_id (string), year (long), duration (double).
+
+The artists table has the following structure:
+artist_id (unique string), name (string), location (string), latitude (double), longitude (double).
+
+The users table has the following structure:
+user_id (unique string), first_name (string), last_name (string), gender (string), level (string)
+
+The time table has the following structure:
+start_time (unique long), hour (integer), day (integer), week (integer), month (integer), year (integer), weekday (long)
+
+And lastly, the songplays table has the following structure:
+start_time (long), user_id (string), level (string), song_id (string), artist_id (string), session_id (string), location (string), user_agent (string), year (integer), month (integer)
+
+These tables have the classical fact/dimension table split. songplays table is the fact table, the dimension tables are songs, artists, uesrs and time.
 
 ## [Optional] Provide example queries and results for song play analysis.
 I wrote a Jupyter notebook that reads my parquet files from my own s3 bucket and tries to find the number of rows contained in the song_table file as an example.
